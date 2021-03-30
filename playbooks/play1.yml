@@ -1,0 +1,37 @@
+---
+
+- hosts: all
+  become: yes
+  tasks:
+  - name: update & upgrade
+    apt:
+       upgrade: dist
+  - name: install nginx
+    apt:
+       name: nginx
+       update_cache: yes
+       state: latest
+       autoclean: yes
+  - name: "create www directory"
+    file: 
+       path: /var/www/mac.strona.web
+       state: directory
+       mode: '0755'
+       owner: "mac"
+       group: "mac"
+  - name: "create foo directory"
+    file:
+       path: /home/mac/test1
+       state: directory
+       mode: '0755'
+  - name: "delete foo directory"
+    file:
+       path: /home/mac/test1
+       state: absent
+  - name: "copy file do directory"
+    template:
+       src: plik_mac.txt
+       dest: /home/mac/
+       owner: mac
+       group: mac
+       mode: '0644'
