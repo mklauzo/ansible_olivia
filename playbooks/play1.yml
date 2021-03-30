@@ -35,3 +35,20 @@
        owner: mac
        group: mac
        mode: '0644'
+    #    notify: start nginx
+    notify: restart nginx
+    # notify: stop nginx 
+    # notify: start nginx 
+  handlers:
+  - name: stop nginx
+    service:
+       name: nginx
+       state: stop
+  - name: start nginx
+    service:
+       name: nginx
+       state: start
+  - name: restart nginx
+    service:
+       name: nginx restart
+       state: restarted 
