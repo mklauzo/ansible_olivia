@@ -1,11 +1,12 @@
 ---
 
-- hosts: all
+- hosts: webservers
   become: yes
   tasks:
   - name: update & upgrade
     apt:
        upgrade: dist
+    notify: stop nginx   
   - name: install nginx
     apt:
        name: nginx
@@ -36,18 +37,18 @@
        group: mac
        mode: '0644'
     #    notify: start nginx
-    notify: restart nginx
+    notify: stop nginx
     # notify: stop nginx 
     # notify: start nginx 
   handlers:
   - name: stop nginx
     service:
        name: nginx
-       state: stop
+       state: stopped
   - name: start nginx
     service:
        name: nginx
-       state: start
+       state: started
   - name: restart nginx
     service:
        name: nginx restart
