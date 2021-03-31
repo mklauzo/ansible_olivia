@@ -13,6 +13,7 @@
        update_cache: yes
        state: latest
        autoclean: yes
+    tags: nginx   
   - name: "create www directory"
     file: 
        path: /var/www/mac.strona.web
@@ -20,6 +21,33 @@
        mode: '0755'
        owner: "mac"
        group: "mac"
+    tags: nginx
+  - name: "copy index.html"
+    template:
+       src: site_test/index.html
+       dest: /var/www/mac.strona.web/
+       owner: mac
+       group: mac
+       mode: '0644' 
+    tags: nginx   
+  - name: "copy configuration nginx"
+    template:
+       src: site_test/mac.strona.web
+       dest: /etc/nginx/sites-available/mac.strona.web
+       # owner: roor
+       #group: root
+       #mode: '0644'
+    tags: nginx
+  - name: "removing sybolink link from /etc/nginx/sites-enabled"
+    file: 
+       path: /etc/nginx/sites-enabled/default
+       state: absent    
+  - name: "create symbolink link to /etc/nginx/sites-enabled"
+    file: 
+       src: /etc/nginx/sites-available/mac.strona.web
+       dest: /etc/nginx/sites-enabled/default
+       state: link
+    tags: nginx
   - name: "create foo directory"
     file:
        path: /home/mac/test1
@@ -36,20 +64,18 @@
        owner: mac
        group: mac
        mode: '0644'
-    #    notify: start nginx
-    notify: stop nginx
-    # notify: stop nginx 
-    # notify: start nginx 
+    notify: restart_nginx
   handlers:
-  - name: stop nginx
-    service:
-       name: nginx
-       state: stopped
-  - name: start nginx
-    service:
-       name: nginx
-       state: started
-  - name: restart nginx
-    service:
-       name: nginx restart
-       state: restarted 
+          # - name: stop nginx
+          # service:
+          # name: nginx
+          # state: stopped
+          #- name: start nginx
+          # service:
+          # name: nginx
+          # state: started
+    - name: restart_nginx
+      service:
+        name: nginx
+        state: restarted 
+      become: yes  
