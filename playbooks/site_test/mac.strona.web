@@ -1,0 +1,12 @@
+server {
+       listen 80 default_server;
+       listen [::]:80 default_server;
+
+       server_name mac.strona.web;
+
+       root /var/www/mac.strona.web;
+       location / { 
+                try_files $uri $uri/ =404;
+  }
+  }
+
