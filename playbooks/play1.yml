@@ -63,13 +63,19 @@
        owner: mac
        group: mac
        mode: '0644'
+    notify: restart nginx
   - debug:     
        msg: "teraz restart"
 
-  - name : Restart nginx
+       #  - name : Restart nginx
+       #    service:
+       #     name: nginx
+       #     state: restarted  
+  handlers:
+  - name: restat nginx
     service:
-     name: nginx
-     state: restarted  
+      name: nginx
+      state: restarted
  
    
      # handlers:
