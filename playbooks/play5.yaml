@@ -1,0 +1,101 @@
+---
+
+- hosts: webservers
+  become: yes
+  tasks:
+    - name: update & upgrade
+      apt:
+         upgrade: dist
+    - name: install nginx
+      apt:
+         name: nginx
+         update_cache: yes
+         state: latest
+         autoclean: yes
+      tags: nginx   
+    - name: "create www directory"
+      file: 
+         path: /var/www/mac.strona.web
+         state: directory
+         mode: '0755'
+         owner: "mac"
+         group: "mac"
+      tags: nginx
+    - name: "copy index.html"
+      template:
+         src: site_test/index.html
+         dest: /var/www/mac.strona.web/
+         owner: mac
+         group: mac
+         mode: '0644' 
+      tags: nginx   
+    - name: "copy configuration nginx"
+      template:
+        src: site_test/mac.strona.web
+        dest: /etc/nginx/sites-available/mac.strona.web
+       # owner: roor
+       #group: root
+       #mode: '0644'
+      tags: nginx
+    - name: "removing sybolink link from /etc/nginx/sites-enabled"
+      file: 
+         path: /etc/nginx/sites-enabled/default
+         state: absent    
+    - name: "create symbolink link to /etc/nginx/sites-enabled"
+      file: 
+         src: /etc/nginx/sites-available/mac.strona.web
+         dest: /etc/nginx/sites-enabled/default
+         state: link
+      tags: nginx
+    - name: "create foo directory"
+      file:
+         path: /home/mac/test1
+         state: directory
+         mode: '0755'
+    - name: "delete foo directory"
+      file:
+         path: /home/mac/test1
+         state: absent
+      notify: 
+      - echo  
+      - create dir  
+    - name: "copy file do directory"
+      template:
+         src: plik_mac.txt
+         dest: /home/mac/
+         owner: mac
+         group: mac
+         mode: '0644'
+      notify: 
+      - restart nginx
+    - name: restat nginx
+      service:
+         name: nginx
+         state: restarted  
+
+    - name: install apache
+      apt:
+        name: apache2
+        state: absent
+
+
+  handlers:
+    - name: restart nginx
+      become: true
+      service: 
+        name: nginx 
+        state: restarted
+
+    - name: restart apache
+      service:
+        name: apache-htcacheclean
+        state: restarted    
+    
+    - name: echo
+      debug: msg="ECHO"
+    
+    - name: create dir
+      file:
+         path: /home/mac/maxx
+         state: directory
+   
