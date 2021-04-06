@@ -1,0 +1,39 @@
+---
+
+- hosts: webservers
+  become: yes
+  tasks:
+          - debug: var=ansible_enp0s3
+          - debug: var=ansible_enp0s3.ipv4.address 
+          - debug: var=ansible_enp0s3.macaddress
+          - debug: var=ansible_os_family   
+          
+            #    - name: magic variables 
+          - debug: var=groups
+          - debug: var=group_names
+          - debug: var=inventory_hostname
+          - debug: var=inventory_hostname_short
+          - debug: var=play_hosts
+
+
+
+  handlers:
+    - name: restart nginx
+      become: true
+      service: 
+        name: nginx 
+        state: restarted
+
+    - name: restart apache
+      service:
+        name: apache-htcacheclean
+        state: restarted    
+    
+    - name: echo
+      debug: msg="ECHO"
+    
+    - name: create dir
+      file:
+         path: /home/mac/maxx
+         state: directory
+   
